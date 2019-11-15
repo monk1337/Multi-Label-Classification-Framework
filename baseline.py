@@ -62,6 +62,3 @@ class Base_models(object):
                  'accuracy': accuracy_score(self.y_test,predictions), 
                 'f1_score': f1_score(self.y_test, predictions, average='micro') 
                }
-    
-    
-        
