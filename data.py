@@ -156,4 +156,26 @@ def dataframe_columns(df,columns_list):
         return 'column list is not equal to data_frame columns'
     
         
-def adj_matrix(df,column_list = None):
+def keep_labels(df, keep_ratio = False, freq_Value = False):
+    
+    text_col = df['text']
+    df_ = df.drop('text', 1)
+    
+    get_frequency = {}
+    
+    for column in df_.columns:
+        get_frequency[column]= (df_[column]==1).sum()
+    sorted_long   = sorted(get_frequency.items(), key=operator.itemgetter(1),reverse=True)
+    raw_frequency = sorted_long
+    
+    if freq_Value:
+        sorted_long = [col for col in sorted_long if int(col[1])>= freq_Value]
+        
+    if keep_ratio:
+        keep_ratio   = int(len(sorted_long)* keep_ratio)
+        sorted_long  = sorted_long[:keep_ratio]
+        
+    keep_columns = [col[0] for col in sorted_long]
+    df_          = df_[keep_columns]
+    df_['text']  = text_col
+    return df_, raw_frequency
