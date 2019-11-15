@@ -2,6 +2,10 @@ import numpy as np
 from skmultilearn.adapt import MLkNN
 from scipy.sparse import csr_matrix, lil_matrix
 from skmultilearn.problem_transform import LabelPowerset
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
+
 from skmultilearn.problem_transform import BinaryRelevance
 from sklearn.naive_bayes import GaussianNB
 
@@ -32,8 +36,7 @@ class Base_models(object):
         
         classifier = LabelPowerset(LogisticRegression())
         classifier.fit(self.x_data,  self.y_data)
-        y_test      = np.array(self.y_test,dtype = np.float32)
-        predictions = np.array(predictions,dtype = np.float32)
+
 
         predictions = classifier.predict(self.x_test)
         
