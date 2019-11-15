@@ -77,3 +77,42 @@ def tf_idf(train_sentences,test_sentences):
     x_test = vectorizer.transform(test_text)
     
     return x_train,x_test
+
+
+#demo data
+def get_keras_data():
+    
+    with open('./better/r_steamed_st.pkl','rb') as f:
+        sentences = pk.load(f)
+    with open('./better/r_steamed_lb.pkl','rb') as f:
+        labels = pk.load(f)
+        
+    return lower_case(sentences), labels
+
+def get_retu_data(keep_ratio):
+    
+    with open('reuters_sentences_st.pkl','rb') as f:
+        sentences = pk.load(f)
+    
+    with open('all_raw_labels_keras.pkl','rb') as f:
+        labels = pk.load(f)
+
+    with open('label_order_keras.pkl','rb') as f:
+        columns = pk.load(f)
+
+    with open('label_encoding_keras.pkl','rb') as f:
+        label_embedding = pk.load(f)
+
+    with open('one_hot_encoding_keras.pkl','rb') as f:
+        one_hot = pk.load(f)
+
+    with open('adj_matrix_keras.pkl','rb') as f:
+        adj_matrix = pk.load(f)
+        
+    
+        
+    if keep_ratio:
+        sentences, labels = keep(sentences,labels,keep_ratio)
+        
+        
+    return lower_case(sentences),labels,columns,label_embedding,one_hot,adj_matrix
