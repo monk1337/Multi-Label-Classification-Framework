@@ -126,3 +126,34 @@ def get_retu_data(keep_ratio):
         
         
     return lower_case(sentences),labels,columns,label_embedding,one_hot,adj_matrix
+
+from sklearn.preprocessing import MultiLabelBinarizer
+
+
+def labels_to_dataframe(sentences,labels):
+    mlb              = MultiLabelBinarizer()
+    labels_on        = mlb.fit_transform(labels)
+    pd_data          = pd.DataFrame(labels_on)
+    pd_data.columns  = mlb.classes_
+    pd_data['text']  = sentences
+    return pd_data
+
+def one_hot_to_dataframe(sentences,labels,columns_name):
+
+    pd_data          = pd.DataFrame(labels)
+    pd_data.columns  = columns_name
+    pd_data['text']  = sentences
+    return pd_data
+
+def dataframe_columns(df,columns_list):
+    text_col = df['text']
+    df = df.drop('text', 1)
+    if len(df.columns) == len(columns_list):
+        df = df.reindex(columns = columns_list)
+        df['text'] = text_col
+        return df
+    else:
+        return 'column list is not equal to data_frame columns'
+    
+        
+def adj_matrix(df,column_list = None):
