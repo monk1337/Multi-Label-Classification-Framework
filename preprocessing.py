@@ -3,6 +3,7 @@ import sys
 import warnings
 import pandas as pd
 import numpy as np
+from sklearn.model_selection import train_test_split
 import nltk
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -16,8 +17,8 @@ def lower_case(sentences):
 
 def keep(sentences,labels,ratio):
     data_size = int(len(sentences) * ratio)
-    sentences = self.sentences[:data_size]
-    labels    = self.labels[:data_size]
+    sentences = sentences[:data_size]
+    labels    = labels[:data_size]
     return sentences,labels
 
 def split_data(sentences,labels):
@@ -70,11 +71,20 @@ def stemming(sentence):
 
 
 def tf_idf(train_sentences,test_sentences):
+    
+    #error while passing list 
+    #solution : converting into pandas frame
+
+    pd_train_frame = pd.DataFrame({'text': train_sentences})
+    pd_test_frame =  pd.DataFrame({'text': test_sentences})
+    pd_train_frame = pd_train_frame['text']
+    pd_test_frame  = pd_test_frame['text']
+    
     vectorizer = TfidfVectorizer(strip_accents='unicode', analyzer='word', ngram_range=(1,3), norm='l2')
-    vectorizer.fit(train_sentences)
-    vectorizer.fit(test_sentences)
-    x_train = vectorizer.transform(train_text)
-    x_test = vectorizer.transform(test_text)
+    vectorizer.fit(pd_train_frame)
+    vectorizer.fit(pd_test_frame)
+    x_train = vectorizer.transform(pd_train_frame)
+    x_test = vectorizer.transform(pd_test_frame)
     
     return x_train,x_test
 
@@ -82,9 +92,9 @@ def tf_idf(train_sentences,test_sentences):
 #demo data
 def get_keras_data():
     
-    with open('./better/r_steamed_st.pkl','rb') as f:
+    with open('r_steamed_st.pkl','rb') as f:
         sentences = pk.load(f)
-    with open('./better/r_steamed_lb.pkl','rb') as f:
+    with open('r_steamed_lb.pkl','rb') as f:
         labels = pk.load(f)
         
     return lower_case(sentences), labels
