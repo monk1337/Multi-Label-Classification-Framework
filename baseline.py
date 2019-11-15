@@ -2,6 +2,8 @@ import numpy as np
 from skmultilearn.adapt import MLkNN
 from scipy.sparse import csr_matrix, lil_matrix
 from skmultilearn.problem_transform import LabelPowerset
+from sklearn.linear_model import LogisticRegression
+
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
@@ -23,12 +25,9 @@ class Base_models(object):
         classifier.fit(self.x_data,  self.y_data)
         predictions = classifier.predict(self.x_test)
 
-        y_test      = np.array(self.y_test,dtype = np.float32)
-        predictions = np.array(predictions,dtype = np.float32)
-
         return {
-                 'accuracy': accuracy_score(y_test,predictions), 
-                'f1_score': f1_score(y_test, predictions, average='micro') 
+                 'accuracy': accuracy_score(self.y_test,predictions), 
+                'f1_score': f1_score(self.y_test, predictions, average='micro') 
                }
     
     
@@ -39,13 +38,11 @@ class Base_models(object):
 
 
         predictions = classifier.predict(self.x_test)
-        
-        y_test      = np.array(self.y_test,dtype = np.float32)
-        predictions = np.array(predictions,dtype = np.float32)
+
 
         return {
-                 'accuracy': accuracy_score(y_test,predictions), 
-                'f1_score': f1_score(y_test, predictions, average='micro') 
+                 'accuracy': accuracy_score(self.y_test,predictions), 
+                'f1_score': f1_score(self.y_test, predictions, average='micro') 
                }
     
     def mlknn(self):
@@ -60,11 +57,10 @@ class Base_models(object):
 
         # predict
         predictions = classifier_new.predict(x_test)
-        y_test      = np.array(self.y_test,dtype = np.float32)
         
         return {
-                 'accuracy': accuracy_score(y_test,predictions), 
-                'f1_score': f1_score(y_test, predictions, average='micro') 
+                 'accuracy': accuracy_score(self.y_test,predictions), 
+                'f1_score': f1_score(self.y_test, predictions, average='micro') 
                }
     
     
