@@ -183,3 +183,29 @@ def keep_labels(df, keep_ratio = False, freq_Value = False):
 def adj_matrix(df):
     u = np.diag(np.ones(df.shape[1], dtype=bool))
     return df.T.dot(df) * (~u)
+def get_raw_data():
+    
+    documents = reuters.fileids()
+    train_docs_id = list(filter(lambda doc: doc.startswith("train"),
+                                documents))
+    test_docs_id = list(filter(lambda doc: doc.startswith("test"),
+                               documents))
+    X_train = [(reuters.raw(doc_id)) for doc_id in train_docs_id]
+    X_test = [(reuters.raw(doc_id)) for doc_id in test_docs_id]
+
+
+    mlb = MultiLabelBinarizer()
+    y_train = [reuters.categories(doc_id)
+                                 for doc_id in train_docs_id]
+    y_test = [reuters.categories(doc_id)
+                            for doc_id in test_docs_id]
+
+    all_dataa     =    X_train +  X_test
+    all_lavelsa   =    y_train +  y_test
+
+
+
+    mlb = MultiLabelBinarizer()
+    datas_y = mlb.fit_transform(all_lavelsa)
+    
+    return all_dataa, datas_y, mlb.classes_
