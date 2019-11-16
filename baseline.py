@@ -4,12 +4,16 @@ from scipy.sparse import csr_matrix, lil_matrix
 from skmultilearn.problem_transform import LabelPowerset
 from sklearn.linear_model import LogisticRegression
 
+from skmultilearn.problem_transform import ClassifierChain
+
+
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 
 from skmultilearn.problem_transform import BinaryRelevance
 from sklearn.naive_bayes import GaussianNB
+
 
 class Base_models(object):
     
@@ -62,3 +66,19 @@ class Base_models(object):
                  'accuracy': accuracy_score(self.y_test,predictions), 
                 'f1_score': f1_score(self.y_test, predictions, average='micro') 
                }
+    
+    
+    
+    def classfier_chain(self):
+        
+        classifier = ClassifierChain(LogisticRegression())
+        classifier.fit(self.x_data,  self.y_data)
+        
+        predictions = classifier.predict(self.x_test)
+        
+        
+        return {
+                 'accuracy': accuracy_score(self.y_test,predictions), 
+                'f1_score': f1_score(self.y_test, predictions, average='micro') 
+               }
+        
