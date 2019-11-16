@@ -9,6 +9,11 @@ from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem.snowball import SnowballStemmer
 import re
+import pandas as pd
+nltk.download("reuters")
+from nltk.corpus import reuters
+from sklearn.preprocessing import MultiLabelBinarizer
+import os
 
 
 
