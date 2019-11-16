@@ -32,8 +32,8 @@ import numpy as np
 
 #tf-idf vectors
 
-ration_data_text = list(ration_data['text'])[:100]
-labels           = np.array(ration_data.drop('text', 1))[:100]
+ration_data_text = list(ration_data['text'])
+labels           = np.array(ration_data.drop('text', 1))
 
 
 # In[7]:
