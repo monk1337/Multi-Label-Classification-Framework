@@ -1,21 +1,3 @@
-# import pickle as pk
-# import sys
-# import warnings
-# import pandas as pd
-# import numpy as np
-# from sklearn.model_selection import train_test_split
-# import nltk
-# from nltk.corpus import stopwords
-# from sklearn.feature_extraction.text import TfidfVectorizer
-# from nltk.stem.snowball import SnowballStemmer
-# import pandas as pd
-# nltk.download("reuters")
-# from nltk.corpus import reuters
-# from sklearn.preprocessing import MultiLabelBinarizer
-# import os
-# import re
-
-
 # # Convert text to lowercase – This is to avoid distinguish between words simply on case.
 
 # # Remove Number – Numbers may or may not be relevant to our analyses. Usually it does not carry any importance in sentiment analysis
@@ -52,23 +34,22 @@ from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem.snowball import SnowballStemmer
 import re
-import pandas as pd
 
 from sklearn.preprocessing import MultiLabelBinarizer
 import os
 
 
-from nlpre import titlecaps, dedash, identify_parenthetical_phrases
-from nlpre import replace_acronyms, replace_from_dictionary
+# from nlpre import titlecaps, dedash, identify_parenthetical_phrases
+# from nlpre import replace_acronyms, replace_from_dictionary
 
-def nlpre_pipeline(sentences):
-    ABBR = identify_parenthetical_phrases()(sentences)
-    parsers = [dedash(), titlecaps(), replace_acronyms(ABBR),
-           replace_from_dictionary(prefix="MeSH_")]
-    for f in parsers:
-        sentences = f(sentences)
+# def nlpre_pipeline(sentences):
+#     ABBR = identify_parenthetical_phrases()(sentences)
+#     parsers = [dedash(), titlecaps(), replace_acronyms(ABBR),
+#            replace_from_dictionary(prefix="MeSH_")]
+#     for f in parsers:
+#         sentences = f(sentences)
         
-    return sentences
+#     return sentences
 
 
 def lower_case(sentences):
