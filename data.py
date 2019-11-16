@@ -217,8 +217,11 @@ import warnings
 import operator
 import pandas as pd
 import string
+from collections import Counter
 import numpy as np
 from sklearn.model_selection import train_test_split
+from tqdm import tqdm
+
 import nltk
 import random
 from nltk.corpus import stopwords
@@ -265,7 +268,7 @@ def cleanHtml(sentence):
 
 def preproces(sentences):
     all_data = []
-    for sentence in sentences:
+    for sentence in tqdm(sentences):
         all_data.append(keepAlpha(cleanPunc(cleanHtml(sentence.lower()))))
         
     return all_data
@@ -309,13 +312,13 @@ def stemming(sentence):
 
 def steamit(sentences):
     all_data = []
-    for sentence in sentences:
+    for sentence in tqdm(sentences):
         all_data.append(stemming(sentence))
     return all_data
 
 def stopit_dude(sentences):
     all_data = []
-    for sentence in sentences:
+    for sentence in tqdm(sentences):
         all_data.append(removeStopWords(sentence))
     return all_data
 
@@ -493,7 +496,7 @@ def get_sentence_length(sentences):
     
     lenths = []
     
-    for sentence in sentences:
+    for sentence in tqdm(sentences):
         if isinstance(sentence,list):
             lenths.append(len(sentence))
         else:
@@ -506,3 +509,94 @@ def get_sentence_length(sentences):
 def chunk(sentences,value):
     
     return [" ".join(sentence.split()[:value]) for sentence in sentences]
+
+
+
+def loadGloveModel(gloveFile):
+        print("Loading Glove Model")
+        f = open(gloveFile,'r')
+        model = {}
+        for line in f:
+            splitLine = line.split()
+            word = splitLine[0]
+            embedding = np.array([float(val) for val in splitLine[1:]])
+            model[word] = embedding
+        print("Done.",len(model)," words loaded!")
+        return model
+    
+    
+def get_label_dict():
+    
+    return {'cocoa': 'cocoa', 'acq': ['corporate', 'acquisitions'], 'money-supply': ['money', 'supply'], 'corn': 'corn', 'earn': 'earn', 'trade': 'trade', 'crude': 'crude', 'nat-gas': ['natural', 'gas'], 'coffee': 'coffee', 'sugar': 'sugar', 'veg-oil': ['vegetable', 'oil'], 'gas': 'gas', 'iron-steel': ['iron', 'steel'], 'ship': 'ship', 'money-fx': 'money', 'cotton': 'cotton', 'dlr': 'dlr', 'interest': 'interest', 'grain': 'grain', 'wheat': 'wheat', 'carcass': 'carcass', 'livestock': 'livestock', 'gnp': 'gnp', 'jobs': 'jobs', 'strategic-metal': ['strategic', 'metal'], 'oilseed': 'oilseed', 'soybean': 'soybean', 'barley': 'barley', 'meal-feed': ['meal', 'feed'], 'sorghum': 'sorghum', 'soy-oil': ['soy', 'oil'], 'gold': 'gold', 'lei': 'lei', 'ipi': 'ipi', 'alum': 'alum', 'cpi': 'cpi', 'reserves': 'reserves', 'tea': 'tea', 'bop': 'bop', 'tin': 'tin', 'housing': 'housing', 'yen': 'yen', 'lead': 'lead', 'silver': 'silver', 'zinc': 'zinc', 'rice': 'rice', 'heat': 'heat', 'pet-chem': ['pet', 'chem'], 'income': 'income', 'rubber': 'rubber', 'dmk': 'dmk', 'rapeseed': 'rapeseed', 'sunseed': 'sunseed', 'hog': 'hog', 'fuel': 'fuel', 'orange': 'orange', 'copper': 'orange', 'lumber': 'lumber', 'palm-oil': ['palm', 'oil'], 'soy-meal': ['soy', 'meal'], 'wpi': 'wpi', 'oat': 'oat', 'retail': 'retail', 'platinum': 'platinum'}
+
+
+def label_correlation_matrix(labels_list):
+    
+    load_embeddings = loadGloveModel('glove.6B.300d.txt')
+    
+    labels_embeddings = []
+
+    for i in tqdm(labels_list):
+        if isinstance(i,list):
+            dta_both = []
+            for k in i:
+                dta_both.append(load_embeddings[k])
+            labels_embeddings.append(np.average(dta_both,axis=0))
+        else:
+            labels_embeddings.append(load_embeddings[i])
+        
+    return np.array(labels_embeddings)
+
+
+def vocab_freq(sentences, 
+               keep_ratio = False, 
+               freq_Value = False, 
+               custom_value = False):
+    
+    vocab_frequency = []
+    for sentence in tqdm(sentences):
+        if isinstance(sentence,list):
+            vocab_frequency.extend(sentence)
+        else:
+            vocab_frequency.extend(sentence.split())
+    freq = Counter(vocab_frequency)
+    
+    sorted_long   = sorted(freq.items(), key=operator.itemgetter(1),reverse=True)
+    
+    if freq_Value:
+        sorted_long = sorted([col for col in sorted_long if int(col[1])>= freq_Value])
+        
+    if keep_ratio:
+        keep_ratio   = int(len(sorted_long)* keep_ratio)
+        sorted_long  = sorted(sorted_long[:keep_ratio])
+        
+    if custom_value:
+        sorted_long = sorted(sorted_long[:custom_value])
+        
+    freq_num        = set([k[1] for k in sorted_long])
+    
+    word_to_int = [(n[0],s) for s,n in enumerate(sorted_long,2)]
+    word_to_int.extend([('unk',1),('pad',0)])
+    
+    
+    int_to_word = [(n,m) for m,n in word_to_int]
+        
+    return sorted_long, freq_num,word_to_int,int_to_word
+
+
+def encoder(sentences, vocab_dict):
+    vocab_dict = dict(vocab_dict)
+    all_sentences = []
+    
+    for sentence in tqdm(sentences):
+        token = nltk.word_tokenize(sentence)
+        encoded_token = []
+        for k in token:
+            if k in vocab_dict:
+                
+                encoded_token.append(vocab_dict[k])
+            else:
+                encoded_token.append(vocab_dict['unk'])
+        all_sentences.append(encoded_token)
+    
+    return all_sentences, vocab_dict
