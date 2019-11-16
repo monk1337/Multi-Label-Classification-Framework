@@ -211,6 +211,8 @@
     
 #     return all_dataa, datas_y, mlb.classes_
 
+
+
 import pickle as pk
 import sys
 import warnings
@@ -530,6 +532,9 @@ def get_label_dict():
     return {'cocoa': 'cocoa', 'acq': ['corporate', 'acquisitions'], 'money-supply': ['money', 'supply'], 'corn': 'corn', 'earn': 'earn', 'trade': 'trade', 'crude': 'crude', 'nat-gas': ['natural', 'gas'], 'coffee': 'coffee', 'sugar': 'sugar', 'veg-oil': ['vegetable', 'oil'], 'gas': 'gas', 'iron-steel': ['iron', 'steel'], 'ship': 'ship', 'money-fx': 'money', 'cotton': 'cotton', 'dlr': 'dlr', 'interest': 'interest', 'grain': 'grain', 'wheat': 'wheat', 'carcass': 'carcass', 'livestock': 'livestock', 'gnp': 'gnp', 'jobs': 'jobs', 'strategic-metal': ['strategic', 'metal'], 'oilseed': 'oilseed', 'soybean': 'soybean', 'barley': 'barley', 'meal-feed': ['meal', 'feed'], 'sorghum': 'sorghum', 'soy-oil': ['soy', 'oil'], 'gold': 'gold', 'lei': 'lei', 'ipi': 'ipi', 'alum': 'alum', 'cpi': 'cpi', 'reserves': 'reserves', 'tea': 'tea', 'bop': 'bop', 'tin': 'tin', 'housing': 'housing', 'yen': 'yen', 'lead': 'lead', 'silver': 'silver', 'zinc': 'zinc', 'rice': 'rice', 'heat': 'heat', 'pet-chem': ['pet', 'chem'], 'income': 'income', 'rubber': 'rubber', 'dmk': 'dmk', 'rapeseed': 'rapeseed', 'sunseed': 'sunseed', 'hog': 'hog', 'fuel': 'fuel', 'orange': 'orange', 'copper': 'orange', 'lumber': 'lumber', 'palm-oil': ['palm', 'oil'], 'soy-meal': ['soy', 'meal'], 'wpi': 'wpi', 'oat': 'oat', 'retail': 'retail', 'platinum': 'platinum'}
 
 
+#there are two word_to_vec function 
+
+#this is for multilabel and generate label embedding
 def label_correlation_matrix(labels_list):
     
     load_embeddings = loadGloveModel('glove.6B.300d.txt')
@@ -600,3 +605,26 @@ def encoder(sentences, vocab_dict):
         all_sentences.append(encoded_token)
     
     return all_sentences, vocab_dict
+
+
+#there are two word_to_vec function 
+
+#this is for vocab embedding
+
+def vocab_embedding(vocab):
+    
+    vocab   = sorted(dict(vocab).items(), key=operator.itemgetter(1))
+        
+    encoded_vocab = []
+    not_in_embedding = []
+    vocas = [token[0].lower() for token in vocab]
+    load_embeddings = loadGloveModel('glove.6B.300d.txt')
+    
+    for token in tqdm(vocas):
+        if token in load_embeddings:
+            encoded_vocab.append(load_embeddings[token])
+        else:
+            not_in_embedding.append(token)
+            encoded_vocab.append(load_embeddings['unk'])
+            
+    return np.array(encoded_vocab), not_in_embedding
