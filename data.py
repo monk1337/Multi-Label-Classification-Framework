@@ -183,6 +183,7 @@ def keep_labels(df, keep_ratio = False, freq_Value = False):
 def adj_matrix(df):
     u = np.diag(np.ones(df.shape[1], dtype=bool))
     return df.T.dot(df) * (~u)
+
 def get_raw_data():
     
     documents = reuters.fileids()
