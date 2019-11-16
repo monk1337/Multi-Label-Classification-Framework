@@ -179,3 +179,7 @@ def keep_labels(df, keep_ratio = False, freq_Value = False):
     df_          = df_[keep_columns]
     df_['text']  = text_col
     return df_, raw_frequency
+
+def adj_matrix(df):
+    u = np.diag(np.ones(df.shape[1], dtype=bool))
+    return df.T.dot(df) * (~u)
