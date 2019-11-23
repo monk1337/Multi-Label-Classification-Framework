@@ -436,3 +436,9 @@ def vocab_embedding(vocab):
             encoded_vocab.append(load_embeddings['unk'])
             
     return np.array(encoded_vocab), not_in_embedding
+
+# how many rows you want
+def data_volume(dataframe, volume):
+    
+    df = dataframe.sample(frac=1).reset_index(drop=True)
+    return df.head(int(volume))
