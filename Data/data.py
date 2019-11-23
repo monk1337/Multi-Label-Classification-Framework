@@ -482,8 +482,8 @@ def get_quick_data(freq_label,how_much, pickle_ = True, baseline_classical = Tru
         #map it 
 
         final_labels = []
-        for labels in freq_list:
-            final_labels.append(label_dict[labels[0]])
+        for labels_a in freq_list:
+            final_labels.append(label_dict[labels_a[0]])
             
         embeddin = label_correlation_matrix(final_labels)
         
@@ -499,4 +499,6 @@ def get_quick_data(freq_label,how_much, pickle_ = True, baseline_classical = Tru
         with open('deep_leaning_label_embedding.pkl','wb') as f:
             pk.dump(embeddin,f)
             
-    return 0
+    return len(word_to_int), labels.shape
+
+# print(get_quick_data(0.25, 4000 , pickle_ = True))
