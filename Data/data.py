@@ -442,3 +442,61 @@ def data_volume(dataframe, volume):
     
     df = dataframe.sample(frac=1).reset_index(drop=True)
     return df.head(int(volume))
+
+
+def get_quick_data(freq_label,how_much, pickle_ = True, baseline_classical = True, deep_learning = True):
+    
+    x,y = get_raw_data()
+    x = lower_case(x)
+    x = chunk(x,150)
+    x = preproces(x)
+    df = labels_to_dataframe(x,y)
+    ration_data, freq_list = keep_labels(df, keep_ratio = freq_label, freq_Value = False)
+    df = data_volume(ration_data,how_much)
+    ration_data_text = list(df['text'])
+    labels           = np.array(df.drop('text', 1))
+            
+    if baseline_classical:
+        X_train, X_val, y_train, y_val = split_data(ration_data_text,labels)
+        train_x, test_x = tf_idf(X_train,X_val)
+        
+        with open('baseline_classical_train_x.pkl','wb') as f:
+            pk.dump(train_x,f)
+        
+        with open('baseline_classical_y_train.pkl','wb') as f:
+            pk.dump(y_train,f)
+            
+        with open('baseline_classical_test_x.pkl','wb') as f:
+            pk.dump(test_x,f)
+            
+        with open('baseline_classical_y_val.pkl','wb') as f:
+            pk.dump(y_val,f)
+        
+        
+    if deep_learning:
+        sorted_long, freq_num,word_to_int,int_to_word = vocab_freq(ration_data_text)
+        all_sentences, vocab_dict = encoder(ration_data_text,word_to_int)
+        dgh = adj_matrix(ration_data)
+        final_ = final_adj_matrix(dgh,freq_list)
+        label_dict = get_label_dict()
+        #map it 
+
+        final_labels = []
+        for labels in freq_list:
+            final_labels.append(label_dict[labels[0]])
+            
+        embeddin = label_correlation_matrix(final_labels)
+        
+        with open('deep_learning_all_sentences.pkl','wb') as f:
+            pk.dump(all_sentences,f)
+            
+        with open('deep_learning_all_labels.pkl','wb') as f:
+            pk.dump(labels,f)
+            
+        with open('deep_leaning_adj_matrix.pkl','wb') as f:
+            pk.dump(final_,f)
+            
+        with open('deep_leaning_label_embedding.pkl','wb') as f:
+            pk.dump(embeddin,f)
+            
+    return 0
